@@ -1,5 +1,4 @@
 'use strict';
-const { Solar } = require('lunar-javascript');
 
 function parseDate(text) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
@@ -18,8 +17,20 @@ function parseDate(text) {
   return { year, month, day };
 }
 
+// Loaded lazily so --help and input errors still work before `npm install`
+function loadSolar() {
+  try {
+    return require('lunar-javascript').Solar;
+  } catch (err) {
+    if (err.code === 'MODULE_NOT_FOUND') {
+      throw new Error('未安装依赖 lunar-javascript，请先在项目目录运行 npm install');
+    }
+    throw err;
+  }
+}
+
 function formatLunar({ year, month, day }) {
-  const lunar = Solar.fromYmd(year, month, day).getLunar();
+  const lunar = loadSolar().fromYmd(year, month, day).getLunar();
   const ymd = `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   return `${ymd} 农历${lunar.getYearInGanZhi()}年（${lunar.getYearShengXiao()}年）${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`;
 }

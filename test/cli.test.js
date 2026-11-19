@@ -1,14 +1,16 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const ROOT = path.join(__dirname, '..');
 
-function run(args, env = {}) {
+function run(args, env = {}, cwd = ROOT) {
   return spawnSync(process.execPath, ['bin/lunar-today.js', ...args], {
-    cwd: ROOT,
+    cwd,
     encoding: 'utf8',
     env: { ...process.env, ...env },
   });
@@ -110,3 +112,30 @@ for (const args of HELP_CASES) {
     assert.equal(r.stdout, HELP);
   });
 }
+
+test('CLI 未安装依赖：帮助照常输出，换算日期提示运行 npm install', async (t) => {
+  // 模拟刚克隆、还没 npm install 的项目
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'lunar-today-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  for (const name of ['bin', 'src', 'package.json']) {
+    fs.cpSync(path.join(ROOT, name), path.join(dir, name), { recursive: true });
+  }
+  assert.throws(() => require.resolve('lunar-javascript', { paths: [path.join(dir, 'src')] }));
+
+  for (const args of [['--help'], ['-h']]) {
+    await t.test(args.join(' '), () => {
+      const r = run(args, {}, dir);
+      assert.equal(r.stderr, '');
+      assert.equal(r.status, 0);
+      assert.equal(r.stdout, HELP);
+    });
+  }
+  for (const args of [['--date', '2026-02-17'], []]) {
+    await t.test(args.join(' ') || '无参数', () => {
+      const r = run(args, {}, dir);
+      assert.equal(r.status, 1);
+      assert.equal(r.stdout, '');
+      assert.equal(r.stderr, '错误：未安装依赖 lunar-javascript，请先在项目目录运行 npm install\n');
+    });
+  }
+});

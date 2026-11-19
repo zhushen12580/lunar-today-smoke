@@ -14,6 +14,15 @@ test('package.json：唯一运行时依赖 lunar-javascript 精确锁定为 1.7.
   assert.equal(pkg.scripts.test, 'node --test');
 });
 
+test('package-lock.json：lunar-javascript 1.7.8 从 registry.npmjs.org 解析', () => {
+  assert.deepEqual(require('../package-lock.json').packages['node_modules/lunar-javascript'], {
+    version: '1.7.8',
+    resolved: 'https://registry.npmjs.org/lunar-javascript/-/lunar-javascript-1.7.8.tgz',
+    integrity: 'sha512-T79Lq2t5zjPu7nnkuUn3xFqIMIB5LCVSn6uJXQLvgWEqUGdE4KQXqQOVBaoYsVHY/8MIwFd7ol9dJ5bP2ItXUQ==',
+    license: 'MIT',
+  });
+});
+
 const BASELINE = [
   ['2026-11-19', '2026-11-19 农历丙午年（马年）十月十一'],
   ['2026-02-16', '2026-02-16 农历乙巳年（蛇年）腊月廿九'],
