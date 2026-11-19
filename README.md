@@ -1,12 +1,14 @@
 # lunar-today
 
+English | [中文](README.zh-CN.md)
+
 Print today's Chinese lunar date in one line.
 
 ```
 lunar-today  →  2026-11-19 农历丙午年（马年）十月十一
 ```
 
-It runs offline, needs no configuration or API key, and prints exactly one line. That makes it easy to drop into a shell prompt, a tmux or status bar, a daily-notes template, or a reminder script.
+It runs offline, needs no configuration or API key, and prints each converted date as exactly one line. That makes it easy to drop into a shell prompt, a tmux or status bar, a daily-notes template, or a reminder script.
 
 ## Why
 
@@ -95,7 +97,7 @@ npm uninstall -g lunar-today
 
 ## Output format and range
 
-The output is always one line:
+Each date conversion prints exactly one line (`--help` prints the multi-line help text shown above instead):
 
 ```
 YYYY-MM-DD 农历<干支>年（<生肖>年）<月名>月<日名>
