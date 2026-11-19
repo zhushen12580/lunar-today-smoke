@@ -77,3 +77,27 @@ for (const [args, line] of ERROR_CASES) {
     assert.equal(r.stderr, line + '\n');
   });
 }
+
+const HELP = [
+  '用法：lunar-today [-d YYYY-MM-DD]',
+  '',
+  '打印今天（或指定公历日期）的农历日期。',
+  '',
+  '选项：',
+  '  -d, --date YYYY-MM-DD  换算指定的公历日期（1901-01-01 至 2100-12-31）',
+  '  -h, --help             显示本帮助',
+  '',
+  '示例：',
+  '  lunar-today',
+  '  lunar-today --date 2026-02-17',
+  '',
+].join('\n');
+
+for (const args of [['--help'], ['-h'], ['--help', '--date', '2026/02/17']]) {
+  test(`CLI ${args.join(' ')} 只输出帮助`, () => {
+    const r = run(args);
+    assert.equal(r.stderr, '');
+    assert.equal(r.status, 0);
+    assert.equal(r.stdout, HELP);
+  });
+}

@@ -3,17 +3,38 @@
 const { parseArgs } = require('node:util');
 const { parseDate, formatLunar } = require('../src/lunar');
 
+const HELP = `用法：lunar-today [-d YYYY-MM-DD]
+
+打印今天（或指定公历日期）的农历日期。
+
+选项：
+  -d, --date YYYY-MM-DD  换算指定的公历日期（1901-01-01 至 2100-12-31）
+  -h, --help             显示本帮助
+
+示例：
+  lunar-today
+  lunar-today --date 2026-02-17
+`;
+
 function main() {
   let values;
   try {
     ({ values } = parseArgs({
       args: process.argv.slice(2),
-      options: { date: { type: 'string', short: 'd' } },
+      options: {
+        date: { type: 'string', short: 'd' },
+        help: { type: 'boolean', short: 'h' },
+      },
       strict: true,
       allowPositionals: false,
     }));
   } catch {
     throw new Error('参数无效，运行 lunar-today --help 查看用法');
+  }
+
+  if (values.help) {
+    process.stdout.write(HELP);
+    return;
   }
 
   let date;
