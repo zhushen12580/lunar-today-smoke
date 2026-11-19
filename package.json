@@ -1,0 +1,24 @@
+{
+  "name": "lunar-today",
+  "version": "0.1.0",
+  "description": "Print today's Chinese lunar date in one line. Offline, zero config.",
+  "license": "MIT",
+  "bin": {
+    "lunar-today": "bin/lunar-today.js"
+  },
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "dev": "node bin/lunar-today.js",
+    "build": "node --check bin/lunar-today.js && node --check src/lunar.js"
+  },
+  "dependencies": {
+    "lunar-javascript": "1.7.8"
+  }
+}
