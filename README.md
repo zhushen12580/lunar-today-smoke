@@ -123,10 +123,16 @@ node bin/lunar-today.js --date 2026-02-30
 
 ## Windows note
 
-Chinese text displays correctly when the output goes straight to the terminal. To capture the output in a PowerShell variable or pass it through a pipe, run this first:
+Chinese text displays correctly when the output goes straight to the terminal. To capture the output in a PowerShell variable or pipe it to a PowerShell cmdlet, run this first:
 
 ```
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
+```
+
+To pipe the output into another command-line program, also run the line below. Otherwise Windows PowerShell 5.1 sends the Chinese characters to that program as `?`. This encoding writes UTF-8 without a byte-order mark.
+
+```
+$OutputEncoding = New-Object System.Text.UTF8Encoding
 ```
 
 ## Running tests

@@ -123,10 +123,16 @@ node bin/lunar-today.js --date 2026-02-30
 
 ## Windows 编码提示
 
-输出直接显示在终端时，中文正常。要在 PowerShell 中把输出捕获到变量或通过管道传递，先运行：
+输出直接显示在终端时，中文正常。要在 PowerShell 中把输出捕获到变量，或通过管道传给 PowerShell 命令（cmdlet），先运行：
 
 ```
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
+```
+
+要通过管道传给其他命令行程序，还要再运行下面这行，否则 Windows PowerShell 5.1 会把中文变成 `?` 再传过去。这个编码输出的 UTF-8 不带 BOM。
+
+```
+$OutputEncoding = New-Object System.Text.UTF8Encoding
 ```
 
 ## 运行测试

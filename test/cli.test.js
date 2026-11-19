@@ -95,7 +95,14 @@ const HELP = [
   '',
 ].join('\n');
 
-for (const args of [['--help'], ['-h'], ['--help', '--date', '2026/02/17']]) {
+const HELP_CASES = [
+  ['--help'],
+  ['-h'],
+  ['--help', '--date', '2026/02/17'],
+  ['--help', '--date', 'bad', '--date', '2026-02-17'],
+];
+
+for (const args of HELP_CASES) {
   test(`CLI ${args.join(' ')} 只输出帮助`, () => {
     const r = run(args);
     assert.equal(r.stderr, '');
