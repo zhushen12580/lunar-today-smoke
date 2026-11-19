@@ -19,7 +19,8 @@ const HELP = `用法：lunar-today [-d YYYY-MM-DD]
 function main() {
   let values;
   try {
-    ({ values } = parseArgs({
+    let tokens;
+    ({ values, tokens } = parseArgs({
       args: process.argv.slice(2),
       options: {
         date: { type: 'string', short: 'd' },
@@ -27,7 +28,12 @@ function main() {
       },
       strict: true,
       allowPositionals: false,
+      tokens: true,
     }));
+    // parseArgs 对重复选项只保留最后一个值；一次只换算一个日期，重复就算参数无效
+    if (tokens.filter((t) => t.kind === 'option' && t.name === 'date').length > 1) {
+      throw new Error();
+    }
   } catch {
     throw new Error('参数无效，运行 lunar-today --help 查看用法');
   }

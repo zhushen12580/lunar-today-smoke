@@ -67,6 +67,8 @@ const ERROR_CASES = [
   [['--foo'], INVALID_ARGS],
   [['--date'], INVALID_ARGS],
   [['x'], INVALID_ARGS],
+  [['--date', 'bad', '--date', '2026-02-17'], INVALID_ARGS],
+  [['--date', '2026-02-17', '-d', '2026-02-17'], INVALID_ARGS],
 ];
 
 for (const [args, line] of ERROR_CASES) {
