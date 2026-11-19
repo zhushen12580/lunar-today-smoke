@@ -2,7 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const pkg = require('../package.json');
-const { formatLunar } = require('../src/lunar');
+const { parseDate, formatLunar } = require('../src/lunar');
 
 test('package.json：唯一运行时依赖 lunar-javascript 精确锁定为 1.7.8', () => {
   assert.deepEqual(pkg.dependencies, { 'lunar-javascript': '1.7.8' });
@@ -32,5 +32,38 @@ for (const [ymd, expected] of BASELINE) {
   test(`formatLunar：${ymd}`, () => {
     const [year, month, day] = ymd.split('-').map(Number);
     assert.equal(formatLunar({ year, month, day }), expected);
+  });
+}
+
+test('parseDate：合法日期返回数字年月日（含边界与闰日）', () => {
+  assert.deepEqual(parseDate('2026-02-17'), { year: 2026, month: 2, day: 17 });
+  assert.deepEqual(parseDate('1901-01-01'), { year: 1901, month: 1, day: 1 });
+  assert.deepEqual(parseDate('2100-12-31'), { year: 2100, month: 12, day: 31 });
+  assert.deepEqual(parseDate('2024-02-29'), { year: 2024, month: 2, day: 29 });
+  assert.deepEqual(parseDate('2000-02-29'), { year: 2000, month: 2, day: 29 });
+});
+
+const FORMAT = '日期格式应为 YYYY-MM-DD，例如 2026-02-17';
+const RANGE = '仅支持 1901-01-01 至 2100-12-31 之间的日期';
+const REJECTED = [
+  ['2026/02/17', FORMAT],
+  ['2026-2-17', FORMAT],
+  ['20260217', FORMAT],
+  ['2026-02-17 ', FORMAT],
+  ['', FORMAT],
+  ['2026-02-30', '日期不存在：2026-02-30'],
+  ['2026-04-31', '日期不存在：2026-04-31'],
+  ['2026-13-01', '日期不存在：2026-13-01'],
+  ['2026-00-10', '日期不存在：2026-00-10'],
+  ['2100-02-29', '日期不存在：2100-02-29'],
+  ['1900-12-31', RANGE],
+  ['2101-01-01', RANGE],
+  ['0099-12-31', RANGE],
+  ['9999-12-31', RANGE],
+];
+
+for (const [text, message] of REJECTED) {
+  test(`parseDate 拒绝 ${JSON.stringify(text)}`, () => {
+    assert.throws(() => parseDate(text), { message });
   });
 }
