@@ -57,3 +57,23 @@ for (const tz of ['Pacific/Kiritimati', 'Etc/GMT+12']) {
     assert.ok([before, after].includes(r.stdout.slice(0, 10)), r.stdout);
   });
 }
+
+const INVALID_ARGS = '错误：参数无效，运行 lunar-today --help 查看用法';
+const ERROR_CASES = [
+  [['--date', '2026/02/17'], '错误：日期格式应为 YYYY-MM-DD，例如 2026-02-17'],
+  [['--date', '2026-02-30'], '错误：日期不存在：2026-02-30'],
+  [['--date', '1900-12-31'], '错误：仅支持 1901-01-01 至 2100-12-31 之间的日期'],
+  [['--date', '2101-01-01'], '错误：仅支持 1901-01-01 至 2100-12-31 之间的日期'],
+  [['--foo'], INVALID_ARGS],
+  [['--date'], INVALID_ARGS],
+  [['x'], INVALID_ARGS],
+];
+
+for (const [args, line] of ERROR_CASES) {
+  test(`CLI 错误：${args.join(' ')}`, () => {
+    const r = run(args);
+    assert.equal(r.status, 1);
+    assert.equal(r.stdout, '');
+    assert.equal(r.stderr, line + '\n');
+  });
+}
